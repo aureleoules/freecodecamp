@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- THE API IS REALLY SLOW !! -->
+
+<head>
+    <meta charset="utf-8">
+    <title>Weather API!</title>
+    <!--CSS-->
+    <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link href="libs/flatUI/dist/css/flat-ui.css" rel="stylesheet">
+
+    <!-- PERSONNAL CSS STYLESHEET -->
+    <!--JS-->
+    <script type="text/javascript" src="libs/jquery/dist/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA6OCppSr3hEU5qsC1sFXdf5Sq0oLgbrXY"></script>
+
+
+    <style>
+        .weather {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            background-color: #fff;
+            border-radius: 5px;
+            position: absolute;
+            width: 35%;
+            padding: 40px 50px;
+            display: table;
+            .temp {
+                display: table-cell;
+            }
+        }
+    </style>
+</head>
+
+
+
+<body>
+    <a target="_blank" href="https://github.com/aureleoules/freecodecamp/blob/master/weatherapi/index.html">Source Code</a>
+    <div class="weather">
+        <div class="well">
+        <h1 class="text-center">Weather Station:</h1>
+        <h6 id="cityname"></h6>
+
+        <h4 id="temperature"></h4>
+        <a>°C</a>
+    </div>
+
+    </div>
+</body>
+
+<!-- THE API IS REALLY SLOW !! -->
+<script>
+    function success(pos) {
+        var crd = pos.coords;
+        latitude = crd.latitude;
+        longitude = crd.longitude;
+        console.log('Your current position is:');
+        console.log('Latitude : ' + crd.latitude);
+        console.log('Longitude: ' + crd.longitude);
+        console.log('More or less ' + crd.accuracy + ' meters.');
+    };
+
+    function error(err) {
+        console.warn('ERROR(' + err.code + '): ' + err.message);
+    };
+
+
+    var geocoder;
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
+    }
+    //Get the latitude and the longitude;
+    function successFunction(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+
+        console.log(lat, lng);
+        codeLatLng(lat, lng)
+    }
+
+    function errorFunction() {
+        alert("Geocoder failed");
+    }
+    var city;
+
+    function codeLatLng(lat, lng) {
+
+        var latlng = new google.maps.LatLng(lat, lng);
+        geocoder.geocode({
+            'latLng': latlng
+        }, function(results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                console.log(results)
+                if (results[1]) {
+                    for (var i = 0; i < results[0].address_components.length; i++) {
+                        for (var b = 0; b < results[0].address_components[i].types.length; b++) {
+
+                            if (results[0].address_components[i].types[b] == "locality") {
+                                city = results[0].address_components[i];
+                                break;
+                            }
+                            if (results[0].address_components[i].types[b] == "country") {
+                                country = results[0].address_components[i];
+                                break;
+                            }
+                        }
+                    }
+                    //city data
+                    alert(city.long_name + " - " + country.long_name);
+                    city = city.long_name;
+                    getWeather(city);
+                    $('#cityname').text(city + ", " + country.long_name);
+
+
+
+                } else {
+                    alert("No results found");
+                }
+            } else {
+                alert("Geocoder failed due to: " + status);
+            }
+        });
+    }
+
+    function getWeather(cityz) {
+        $.getJSON("http://api.openweathermap.org/data/2.5/weather?q=" + cityz + "&units=metric&APPID=c6a4ccc3784479c24a2015961270c084", function(json) {
+            $('#temperature').text(json.main.temp);
+            alert(json.main.temp);
+        })
+    }
+    $(document).ready(function() {
+        geocoder = new google.maps.Geocoder();
+
+
+    });
+</script>
+
+</html>
