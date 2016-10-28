@@ -8,14 +8,14 @@
     <!--CSS-->
     <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link href="libs/flatUI/dist/css/flat-ui.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/1.3.2/css/weather-icons.min.css" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/weather-icons/1.3.2/css/weather-icons.min.css" rel="stylesheet">
 
 
     <!-- PERSONNAL CSS STYLESHEET -->
     <!--JS-->
     <script type="text/javascript" src="libs/jquery/dist/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA6OCppSr3hEU5qsC1sFXdf5Sq0oLgbrXY"></script>
+    <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=AIzaSyA6OCppSr3hEU5qsC1sFXdf5Sq0oLgbrXY"></script>
 
 
     <style>
@@ -51,8 +51,8 @@
         <h4 id="temperature"></h4>
         <a style="font-size: 35px" id="toggle" href="#">°C</a>
         <div style="float: right">
-            <div id="weatherIcon"></div>
-            <p id="DescTemp"></p>
+            <div style="width: 100%;" id="weatherIcon"></div>
+            <center><p id="DescTemp"></p></center>
 
         </div>
 
@@ -64,78 +64,8 @@
 <script>
     var temp;
     var wIcon;
+    var city, country;
 
-    function success(pos) {
-        var crd = pos.coords;
-        latitude = crd.latitude;
-        longitude = crd.longitude;
-        console.log('Your current position is:');
-        console.log('Latitude : ' + crd.latitude);
-        console.log('Longitude: ' + crd.longitude);
-        console.log('More or less ' + crd.accuracy + ' meters.');
-    };
-
-    function error(err) {
-        console.warn('ERROR(' + err.code + '): ' + err.message);
-    };
-
-
-    var geocoder;
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
-    }
-    //Get the latitude and the longitude;
-    function successFunction(position) {
-        var lat = position.coords.latitude;
-        var lng = position.coords.longitude;
-
-        console.log(lat, lng);
-        codeLatLng(lat, lng)
-    }
-
-    function errorFunction() {
-        alert("Geocoder failed");
-    }
-    var city;
-
-    function codeLatLng(lat, lng) {
-
-        var latlng = new google.maps.LatLng(lat, lng);
-        geocoder.geocode({
-            'latLng': latlng
-        }, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                console.log(results)
-                if (results[1]) {
-                    for (var i = 0; i < results[0].address_components.length; i++) {
-                        for (var b = 0; b < results[0].address_components[i].types.length; b++) {
-
-                            if (results[0].address_components[i].types[b] == "locality") {
-                                city = results[0].address_components[i];
-                                break;
-                            }
-                            if (results[0].address_components[i].types[b] == "country") {
-                                country = results[0].address_components[i];
-                                break;
-                            }
-                        }
-                    }
-                    //city data
-                    city = city.long_name;
-                    getWeather(city);
-                    $('#cityname').text(city + ", " + country.long_name);
-
-
-
-                } else {
-                    alert("No results found");
-                }
-            } else {
-                alert("Geocoder failed due to: " + status);
-            }
-        });
-    }
 
     $("#toggle").click(function() {
         ($(this).text() === "°C") ? $(this).text("°F"): $(this).text("°C");
@@ -154,16 +84,17 @@
             $('#DescTemp').text(desc);
 
             var linkIcon = "http://openweathermap.org/img/w/" + wIcon + ".png";
-            $('#weatherIcon').prepend('<img style="background-color: #34495e" id="theImg" src="' + linkIcon + '"/>')
+            $('#weatherIcon').prepend('<img id="theImg" src="' + linkIcon + '"/>')
 
             $('#temperature').text(temp);
 
         })
     }
     $(document).ready(function() {
-        geocoder = new google.maps.Geocoder();
-
-
+        $.getJSON('http://ipinfo.io', function(data) {
+            $('#cityname').text(data.city + ", " + data.country);
+            getWeather(data.city);
+        });
     });
 </script>
 
