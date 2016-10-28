@@ -8,6 +8,8 @@
     <!--CSS-->
     <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link href="libs/flatUI/dist/css/flat-ui.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/1.3.2/css/weather-icons.min.css" rel="stylesheet">
+
 
     <!-- PERSONNAL CSS STYLESHEET -->
     <!--JS-->
@@ -31,28 +33,38 @@
             .temp {
                 display: table-cell;
             }
+            #toggle {
+                display: none;
+            }
         }
     </style>
 </head>
 
 
 
-<body>
+<body style="background-color: #34495e">
     <a target="_blank" href="https://github.com/aureleoules/freecodecamp/blob/master/weatherapi/index.html">Source Code</a>
-    <div class="weather">
-        <div class="well">
+    <div class="weather well">
         <h1 class="text-center">Weather Station:</h1>
         <h6 id="cityname"></h6>
 
         <h4 id="temperature"></h4>
-        <a>°C</a>
-    </div>
+        <a style="font-size: 35px" id="toggle" href="#">°C</a>
+        <div style="float: right">
+            <div id="weatherIcon"></div>
+            <p id="DescTemp"></p>
+
+        </div>
+
 
     </div>
 </body>
 
 <!-- THE API IS REALLY SLOW !! -->
 <script>
+    var temp;
+    var wIcon;
+
     function success(pos) {
         var crd = pos.coords;
         latitude = crd.latitude;
@@ -110,7 +122,6 @@
                         }
                     }
                     //city data
-                    alert(city.long_name + " - " + country.long_name);
                     city = city.long_name;
                     getWeather(city);
                     $('#cityname').text(city + ", " + country.long_name);
@@ -126,10 +137,28 @@
         });
     }
 
+    $("#toggle").click(function() {
+        ($(this).text() === "°C") ? $(this).text("°F"): $(this).text("°C");
+        if ($("#toggle").text() === "°C") {
+            $("#temperature").text(temp);
+        } else {
+            $("#temperature").text(((9 * temp) / 5) + 32);
+        }
+    });
+
     function getWeather(cityz) {
         $.getJSON("http://api.openweathermap.org/data/2.5/weather?q=" + cityz + "&units=metric&APPID=c6a4ccc3784479c24a2015961270c084", function(json) {
-            $('#temperature').text(json.main.temp);
-            alert(json.main.temp);
+            temp = json.main.temp;
+            wIcon = json.weather[0].icon;
+            desc = json.weather[0].main;
+            $('#DescTemp').text(desc);
+
+            alert(wIcon);
+            var linkIcon = "http://openweathermap.org/img/w/" + wIcon + ".png";
+            $('#weatherIcon').prepend('<img style="background-color: #34495e" id="theImg" src="' + linkIcon + '"/>')
+
+            $('#temperature').text(temp);
+
         })
     }
     $(document).ready(function() {
