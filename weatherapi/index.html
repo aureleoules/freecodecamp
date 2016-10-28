@@ -153,7 +153,6 @@
             desc = json.weather[0].main;
             $('#DescTemp').text(desc);
 
-            alert(wIcon);
             var linkIcon = "http://openweathermap.org/img/w/" + wIcon + ".png";
             $('#weatherIcon').prepend('<img style="background-color: #34495e" id="theImg" src="' + linkIcon + '"/>')
 
