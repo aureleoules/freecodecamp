@@ -8,10 +8,8 @@
     <!--CSS-->
     <link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link href="libs/flatUI/dist/css/flat-ui.css" rel="stylesheet">
-    <link href="//cdnjs.cloudflare.com/ajax/libs/weather-icons/1.3.2/css/weather-icons.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 
-
-    <!-- PERSONNAL CSS STYLESHEET -->
     <!--JS-->
     <script type="text/javascript" src="libs/jquery/dist/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
@@ -27,7 +25,7 @@
             background-color: #fff;
             border-radius: 5px;
             position: absolute;
-            width: 35%;
+            width: auto;
             padding: 40px 50px;
             display: table;
             .temp {
@@ -37,30 +35,39 @@
                 display: none;
             }
         }
+        footer {
+            background-color: #34495e;
+            text-align: center;
+            padding: 0.6667em 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
     </style>
 </head>
 
 
 
 <body style="background-color: #34495e">
-    <a target="_blank" href="https://github.com/aureleoules/freecodecamp/blob/master/weatherapi/index.html">Source Code</a>
+    <a style="margin: 10px" target="_blank" href="https://github.com/aureleoules/freecodecamp/blob/master/weatherapi/index.html">Source Code</a>
     <div class="weather well">
         <h1 class="text-center">Weather Station:</h1>
         <h6 id="cityname"></h6>
 
-        <h4 id="temperature"></h4>
-        <a style="font-size: 35px" id="toggle" href="#">°C</a>
-        <div style="float: right">
-            <div style="width: 100%;" id="weatherIcon"></div>
-            <center><p id="DescTemp"></p></center>
-
+        <div style="display: inline-block;">
+            <p class="h4" style="float: left;" id="temperature"></p>&nbsp
+            <a style="font-size: 29px; margin-top: 35px;" id="toggle" href="#">°C</a>
         </div>
 
 
+
+        <div style="width: 100%;" id="weatherIcon"></div>
+        <p id="DescTemp"></p>
     </div>
 </body>
-
-<!-- THE API IS REALLY SLOW !! -->
+<footer>
+    <p style="color: white">Made with <span><i style = "color: rgb(244,67,54);" class="fa fa-heart"></i></span> by <span><a style="color: #16a085" href="http://aurele.oules.com">Aurèle</a></span>!</p>
+</footer>
 <script>
     var temp;
     var wIcon;
@@ -78,7 +85,7 @@
 
     function getWeather(cityz) {
         $.getJSON("http://api.openweathermap.org/data/2.5/weather?q=" + cityz + "&units=metric&APPID=c6a4ccc3784479c24a2015961270c084", function(json) {
-            temp = json.main.temp;
+            temp = Math.round(json.main.temp);
             wIcon = json.weather[0].icon;
             desc = json.weather[0].main;
             $('#DescTemp').text(desc);
